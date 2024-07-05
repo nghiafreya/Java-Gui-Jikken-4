@@ -1,10 +1,11 @@
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
 
 import javax.print.attribute.standard.Media;
 import javax.sound.sampled.Line;
 import javax.swing.*;
-
+import java.util.Vector;
 public class MyApplication extends JFrame{
     StateManager stateManager;
     MyCanvas canvas;
@@ -14,6 +15,9 @@ public class MyApplication extends JFrame{
     private JMenuItem redFill, blueFill, greenFill;
     private JMenuItem redLine, blueLine, greenLine, blackLine;
     private JMenuItem lineWidth1, lineWidth5, lineWidth10;
+
+    private JMenu FileMenu;
+    private JMenuItem openItem, saveItem;
 
     Mediator med;
     
@@ -175,11 +179,27 @@ public class MyApplication extends JFrame{
         menuBar.add(FillColorMenu);
         menuBar.add(LineColorMenu);
         menuBar.add(LineWidthMenu);
+
+        /************************** */
+        //課題4-2: Open file, Save file
+
         
+        //Open and Save
+        FileMenu = new JMenu("File");
+        openItem = new JMenuItem("Open");
+        saveItem = new JMenuItem("Save");
+        FileMenu.add(openItem);
+        FileMenu.add(saveItem);
+        openItem.addActionListener(new FileOpenListener());
+        saveItem.addActionListener(new FileSaveListener());    
+        
+        menuBar.add(FileMenu);
+
     }
 
     
-
+    /************** */
+    //menuBar ActionListener
     
     class FillColorListener implements ActionListener {
         Color fillColor;
@@ -217,9 +237,75 @@ public class MyApplication extends JFrame{
         }    
     } 
     /**************** */
+    //OpenSaveBar Action Listener
+    //課題4-2
+    // class FileOpenListener implements ActionListener {
+    //     String file_name;
 
-    
+    //     //constructor
+    //     FileOpenListener(String file_name) {
+    //         this.file_name = file_name;
+    //     }
+    //     public void actionPerformed(ActionEvent e) {
+    //             med.file_import(file_name);
+    //             med.clearSelectedDrawings();
+    //             med.repaint();
+    //     }  
+    // }
+        
+    // class FileSaveListener implements ActionListener {
+    //     String file_name;
 
+    //     //constructor
+    //     FileSaveListener(String file_name) {
+    //         this.file_name = file_name;
+    //     }
+    //     public void actionPerformed(ActionEvent e) {
+    //             med.file_export(file_name);
+    //             med.repaint();
+    //     }  
+
+    // }
+
+    //課題4-3
+    class FileOpenListener implements ActionListener {
+
+        //constructor
+        FileOpenListener() {
+            //nothing
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            JFileChooser fc = new JFileChooser();
+            int returnVal = fc.showOpenDialog(null); // ファイルロード用のダイアログを開く
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                File file = fc.getSelectedFile();
+                med.file_import(file.getAbsolutePath());
+                med.clearSelectedDrawings();
+                med.repaint();
+            }
+        }  
+    }
+        
+    class FileSaveListener implements ActionListener {
+        //constructor
+        FileSaveListener() {
+            //nothing
+        }
+        public void actionPerformed(ActionEvent e) {
+            JFileChooser fc = new JFileChooser();
+            int returnVal = fc.showSaveDialog(null); // ファイルセーブ用のダイアログを開く
+
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                File file = fc.getSelectedFile();
+                med.file_export(file.getAbsolutePath());
+            med.repaint();
+            }
+            
+        }  
+
+    }
+    /***************** */
 
     public Dimension getPreferredSize() {
         return new Dimension(600, 400);

@@ -1,3 +1,4 @@
+import java.awt.Choice;
 import java.awt.Color;
 
 public class SelectState extends State {
@@ -28,6 +29,8 @@ public class SelectState extends State {
             selectionRect = new MyRectangle(x, y, 0, 0,  Color.BLACK, new Color(0, 0, 0, 0));
             selectionRect.setDashed(true);
             stateManager.addDrawing(selectionRect);
+            Chosen_point_x = x;
+            Chosen_point_y = y;           
         } else { //clicked on a shape
             stateManager.setSelected(x, y); 
             stateManager.updateDrawing();
@@ -41,8 +44,12 @@ public class SelectState extends State {
     public void mouseDrag(int x, int y) {
         //create the selection rectangle
         if (selectionRect != null) { //expanding selectionRect
-            int width = x - Chosen_point_x;
-            int height = y - Chosen_point_y;
+            int width = Math.abs(x - Chosen_point_x);
+            int height = Math.abs(y - Chosen_point_y);
+            int newX = Math.min(x, Chosen_point_x);
+            int newY = Math.min(y, Chosen_point_y);
+            
+            selectionRect.setLocation(newX, newY);
             selectionRect.setSize(width, height);
             stateManager.updateDrawing();
 
@@ -69,12 +76,12 @@ public class SelectState extends State {
             //Move the shape (the case when only multiple shapes are selected)
             } else if(stateManager.getSelectedDrawings() != null && stateManager.getSelectedDrawings().size() > 1) {
                 for (MyDrawing m : stateManager.getSelectedDrawings()) {
-                    stateManager.move(dx, dy);
+                    m.move(dx, dy);
                     //The point after dragging now became the starting point (treated as "the point we just clicked")
-                    Chosen_point_x = x;
-                    Chosen_point_y = y;
-                    stateManager.updateDrawing();
                 }
+                stateManager.updateDrawing();
+                Chosen_point_x = x;
+                Chosen_point_y = y;
             }
 
 

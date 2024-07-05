@@ -1,6 +1,10 @@
 import java.util.Enumeration;
 import java.util.Vector;
-import java.awt.*; 
+import java.awt.*;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream; 
 
 
 public class Mediator{
@@ -182,5 +186,37 @@ public class Mediator{
                 d.setSelected(false);
             }
         }
+
+        public void file_import (String file_name) {
+            // File入力
+            try {
+                FileInputStream fin = new FileInputStream(file_name);
+                ObjectInputStream in = new ObjectInputStream(fin);
+
+                drawings = (Vector)in.readObject();
+                for (MyDrawing d : drawings) {
+                    d.setSelected(false);
+                }
+                fin.close();
+            } catch (Exception ex) {
+            }
+        }
+        
+
+        public void file_export (String file_name) {
+            // File出力
+            try {
+                FileOutputStream fout = new FileOutputStream(file_name);
+                ObjectOutputStream out = new ObjectOutputStream(fout);
+
+                out.writeObject(drawings);
+                out.flush();
+
+                fout.close();
+            } catch (Exception ex) {
+            }
+        }
+
+            
 
 }

@@ -1,5 +1,7 @@
 import java.awt.*; 
-public class MyDrawing implements Cloneable {
+import java.io.*; 
+
+public class MyDrawing implements Cloneable, Serializable {
     int x, y, w, h;
     Color lineColor, fillColor;
     int lineWidth;
