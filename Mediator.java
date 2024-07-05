@@ -8,7 +8,7 @@ public class Mediator{
     MyCanvas canvas;
     Vector<MyDrawing> selectedDrawings;  // 選択されたオブジェクトのリスト
     Vector<MyDrawing> buffer; // コピー・カット用バッファ
-    
+    StateManager stateManager;
 
     //constructor
     public Mediator(MyCanvas canvas) {
@@ -16,6 +16,7 @@ public class Mediator{
         drawings = new Vector<MyDrawing>();
         selectedDrawings = new Vector<MyDrawing>();
         buffer = new Vector<MyDrawing>();  // Initialize the buffer
+        this.stateManager = stateManager;
     }
 
     public Enumeration<MyDrawing> drawingsElements() {
@@ -55,15 +56,18 @@ public class Mediator{
         return selectedDrawings;
     }
 
-    public void setSelected(int x, int y) {
-        if (!selectedDrawings.isEmpty()) {
-            clearSelectedDrawings(); // Clear previous selections when starting a new selection
-        }
-        
+    public void setSelected(int x, int y) {        
         for (int i = drawings.size() - 1; i >= 0; i--) {
             MyDrawing d = drawings.get(i);
             if (d.contains(x, y)) {
-                setSelectedDrawings(d);
+                if (!d.getSelected()) { //if d has not been selected yet
+                    if (!selectedDrawings.isEmpty()) {
+                        clearSelectedDrawings(); // Clear previous selections when starting a new selection
+                    }
+                    setSelectedDrawings(d);
+                } else if (d.getSelected()) { //if d has already been selected
+                    break;
+                }
                 break;
             } else { //when the selected point (x, y) doesn't belong to any shapes
                 //do nothing

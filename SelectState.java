@@ -24,26 +24,23 @@ public class SelectState extends State {
         }
 
         if (objectClicked == false) { //clicked on an empty position 
-            //(because if we clicked on a shape, the shape will immediately be added
-            //to the selectedDrawing vector, which means getSelectedDrawings != empty)
+            //creat height = 0, weight = 0 selectionRect
             selectionRect = new MyRectangle(x, y, 0, 0,  Color.BLACK, new Color(0, 0, 0, 0));
             selectionRect.setDashed(true);
             stateManager.addDrawing(selectionRect);
-        } else {
+        } else { //clicked on a shape
             stateManager.setSelected(x, y); 
             stateManager.updateDrawing();
             Chosen_point_x = x;
             Chosen_point_y = y;
         }
-        //clicked on a shape
-        //that shape will immediately be added to the selectedDrawing vector,
-        //which means getSelectedDrawings == empty
+  
         
     }
     
     public void mouseDrag(int x, int y) {
         //create the selection rectangle
-        if (selectionRect != null) {
+        if (selectionRect != null) { //expanding selectionRect
             int width = x - Chosen_point_x;
             int height = y - Chosen_point_y;
             selectionRect.setSize(width, height);
@@ -56,23 +53,31 @@ public class SelectState extends State {
                 } else {
                     stateManager.getMediator().removeSelectedDrawing(d);
                 }
-            }
-
-            // Move all the selected drawings
-            
-        } else { //click on a single shape
+            }          
+        } else { //click on a shape's area
             //counting the gap between the point we first clicked and the point after dragging
             int dx = x - Chosen_point_x;
             int dy = y - Chosen_point_y;
 
-            //Move the shape
-            if (stateManager.getSelectedDrawings() != null) { //if there is a shape that is selected
+            //Move the shape (the case when only 1 shape is selected)
+            if (stateManager.getSelectedDrawings() != null &&stateManager.getSelectedDrawings().size() == 1) { //if there is a shape that is selected
                 stateManager.move(dx, dy);
                 //The point after dragging now became the starting point (treated as "the point we just clicked")
                 Chosen_point_x = x;
                 Chosen_point_y = y;
                 stateManager.updateDrawing();
+            //Move the shape (the case when only multiple shapes are selected)
+            } else if(stateManager.getSelectedDrawings() != null && stateManager.getSelectedDrawings().size() > 1) {
+                for (MyDrawing m : stateManager.getSelectedDrawings()) {
+                    stateManager.move(dx, dy);
+                    //The point after dragging now became the starting point (treated as "the point we just clicked")
+                    Chosen_point_x = x;
+                    Chosen_point_y = y;
+                    stateManager.updateDrawing();
+                }
             }
+
+
         }
     }
 
